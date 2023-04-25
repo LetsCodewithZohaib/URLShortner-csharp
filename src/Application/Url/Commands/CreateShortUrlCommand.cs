@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using HashidsNet;
 using MediatR;
 using UrlShortenerService.Application.Common.Interfaces;
@@ -33,7 +33,26 @@ public class CreateShortUrlCommandHandler : IRequestHandler<CreateShortUrlComman
 
     public async Task<string> Handle(CreateShortUrlCommand request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        //OrignalURL
+
+        //put it in the DB
+
+        //By using hash we can encode that
+
+        //Return it back
+        var URL = _context.Urls.Where(x => x.OriginalUrl == request.Url).FirstOrDefault();
+        if (URL!=null)
+        {
+            var hashedst = _hashids.EncodeLong(URL.Id);
+            return "https://localhost:7072/u/" + hashedst;
+            return request.Url;
+        }
+
+        var oriURL = request.Url;
+        var domainURL = new UrlShortenerService.Domain.Entities.Url() { OriginalUrl = oriURL };
+        _context.Urls.Add(domainURL);
+        var id = await  _context.SaveChangesAsync(cancellationToken);
+        var hashedstr= _hashids.EncodeLong(domainURL.Id);
+        return "https://localhost:7072/u/"+ hashedstr;
     }
 }

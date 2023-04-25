@@ -1,6 +1,7 @@
-using FluentValidation;
+﻿using FluentValidation;
 using HashidsNet;
 using MediatR;
+using UrlShortenerService.Application.Common.Exceptions;
 using UrlShortenerService.Application.Common.Interfaces;
 
 namespace UrlShortenerService.Application.Url.Commands;
@@ -33,7 +34,15 @@ public class RedirectToUrlCommandHandler : IRequestHandler<RedirectToUrlCommand,
 
     public async Task<string> Handle(RedirectToUrlCommand request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+        //request ID
+
+        //context we have to find the DB
+
+        // thorw exception URL not found
+        var URlId = _hashids.DecodeLong(request.Id)[0];
+        var URL= _context.Urls.Where(x => x.Id == URlId).FirstOrDefault();
+        if (URL == null) { throw new NotFoundException("URL Not found"); }
+        return URL.OriginalUrl;
+
     }
 }
