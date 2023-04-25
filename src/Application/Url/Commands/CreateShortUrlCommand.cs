@@ -44,8 +44,7 @@ public class CreateShortUrlCommandHandler : IRequestHandler<CreateShortUrlComman
         if (URL!=null)
         {
             var hashedst = _hashids.EncodeLong(URL.Id);
-            return "https://localhost:7072/u/" + hashedst;
-            return request.Url;
+            return "https://localhost:7072/u/" + hashedst;           
         }
 
         var oriURL = request.Url;
